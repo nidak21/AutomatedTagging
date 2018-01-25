@@ -1,0 +1,27 @@
+#!/bin/bash
+
+# run steps to get a GXD training set that is balanced between pos and neg
+#  samples:
+# Use all positive examples and get 1000 each of negative samples
+#    ... MGI discard and non-Discards that are rejected for GXD
+
+scriptdir=~/work/AutomatedTagging
+gxddir=${scriptdir}/Gxd
+RECORDSEP=';;'	# is there some way to get this from the python config file?
+		# this is needed to pass to getRandomSubset.py which is
+		#  kind of generic and therefore doesn't use the config file
+
+${gxddir}/getTrainingData.py  --query pos >trainY.txt
+${gxddir}/getTrainingData.py  --query neg1 >trainNnodis.txt
+${gxddir}/getTrainingData.py  --query neg2 >trainNdiscard.txt
+
+# select a random subset of each
+${scriptdir}/getRandomSubset.py -d ${RECORDSEP} -n 1000 -r trainNnodisRandom.txt -l trainNnodisLeftov.txt <trainNnodis.txt
+
+${scriptdir}/getRandomSubset.py -d ${RECORDSEP} -n 1000 -r trainNdiscardRandom.txt -l trainNdiscardLeftov.txt <trainNdiscard.txt
+
+# concat the training files into one - without preprocessing to get base set
+${scriptdir}/preprocessSamples.py trainY.txt trainNnodisRandom.txt trainNdiscardRandom.txt > trainingSet.txt
+
+# now the preprocessed set
+${scriptdir}/preprocessSamples.py -p default trainingSet.txt > trainingPreproc.txt
