@@ -34,7 +34,7 @@ import db
 #-----------------------------------
 cp = ConfigParser.ConfigParser()
 cp.optionxform = str # make keys case sensitive
-cp.read(["config.cfg","../config.cfg", "../../config.cfg","../../../config.cfg"])
+cp.read([ d+'/config.cfg' for d in ['.', '..', '../..', '../../..'] ])
 #
 FIELDSEP = eval(cp.get("DEFAULT", "FIELDSEP"))
 RECORDSEP = eval(cp.get("DEFAULT", "RECORDSEP"))

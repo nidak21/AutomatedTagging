@@ -3,25 +3,25 @@
 # Library to support handling of lit triage text documents
 #
 import sys
-sys.path.append('..')
-sys.path.append('../..')
 import string
 import re
 import ConfigParser
 import nltk.stem.snowball as nltk
+sys.path.extend(['..', '../..', '../../..'])
 from refSectionLib import RefSectionRemover
 #-----------------------------------
 cp = ConfigParser.ConfigParser()
 cp.optionxform = str # make keys case sensitive
-cp.read(["config.cfg","../config.cfg","../../config.cfg","../../../config.cfg"])
+cp.read([ d+'/config.cfg' for d in ['.', '..', '../..', '../../..'] ])
 
 FIELDSEP  = eval( cp.get("DEFAULT", "FIELDSEP") )
+
+# CLASS_NAMES maps indexes to class names. CLASS_NAME[0] is 0th class name,etc.
+CLASS_NAMES      = eval( cp.get("DEFAULT", "CLASS_NAMES") )
 
 # As is the sklearn convention we use
 #  y_true to be the index of the known class of a sample (from training set)
 #  y_pred is the index of the predicted class of a sample/record
-# CLASS_NAMES maps indexes to class names. CLASS_NAME[0] is 0th class name,etc.
-CLASS_NAMES      = eval( cp.get("DEFAULT", "CLASS_NAMES") )
 #-----------------------------------
 
 class SampleRecord (object):
