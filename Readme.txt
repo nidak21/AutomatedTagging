@@ -1,3 +1,14 @@
+# AutomatedTagging
+Using machine learning to automate MGI literature triage tagging for different
+curation groups
+
+# General things I've learned
+
+    In sklearn, during vectorizing, stop word removal happens before ngram
+    selection (as you'd expect).
+    BUT term removal due to min_df or max_df happens AFTER ngram selection.
+    (i.e., the ngrams frequencies are analysed and the ngrams are removed)
+
 # Repo organization thoughts...
 
 lit triage text tools repo/product
@@ -7,10 +18,6 @@ lit triage text tools repo/product
 Text ML repo
     comparepipelines
     ...
-
-# AutomatedTagging
-Using machine learning to automate MGI literature triage tagging for different
-curation groups
 
 # Abbreviations
 refsectR	-- reference section removal

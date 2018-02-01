@@ -28,15 +28,15 @@ pipeline = Pipeline( [
 ('classifier', SGDClassifier(verbose=0, class_weight='balanced',
 		random_state=randomSeeds['randForClassifier']) ),
 ] )
-parameters={'vectorizer__ngram_range':[(1,3)],
-	'vectorizer__min_df':[2],
-	'vectorizer__max_df':[.98],
+parameters={'vectorizer__ngram_range':[(1,2)],
+	'vectorizer__min_df':[0.1],
+	'vectorizer__max_df':[.8],
 	'classifier__alpha':[1],
 	'classifier__learning_rate':['invscaling'],
 	'classifier__eta0':[ .01],
 	'classifier__loss':[ 'hinge' ],
 	'classifier__penalty':['l2'],
 	}
-p = tl.TextPipelineTuningHelper( pipeline, parameters, beta=4, cv=2,
+p = tl.TextPipelineTuningHelper( pipeline, parameters, beta=4, cv=5,
 			randomSeeds=randomSeeds,).fit()
 print p.getReports()
