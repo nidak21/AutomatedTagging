@@ -131,7 +131,7 @@ class SampleRecord (object):
 
     def truncateText(self):
 	# so you can see a sample record easily
-	self.doc = self.doc[:25]
+	self.doc = self.doc[:50]
 	return self
 
     urls_re = re.compile(r'\bhttps?://\S*',re.IGNORECASE) # match URLs
@@ -148,8 +148,7 @@ class SampleRecord (object):
 	output = ''
 
 	for s in SampleRecord.urls_re.split(self.doc): # split and remove URLs
-	    s.replace('-/-', 'mut_mut')
-	    s.lower()
+	    s = s.replace('-/-', ' mut_mut ').lower()
 	    for m in SampleRecord.token_re.finditer(s):
 		output += " " + SampleRecord.stemmer.stem(m.group())
 	self.doc = output
@@ -164,8 +163,8 @@ class SampleRecord (object):
 	output = ''
 
 	for s in SampleRecord.urls_re.split(self.doc):
-	    s.replace('-/-', 'mut_mut')
-	    output += ' ' + s.lower()
+	    s = s.replace('-/-', ' mut_mut ').lower()
+	    output += ' ' + s
 	self.doc = output
 	return self
 
