@@ -9,6 +9,13 @@ curation groups
     BUT term removal due to min_df or max_df happens AFTER ngram selection.
     (i.e., the ngrams frequencies are analysed and the ngrams are removed)
 
+    Feb 1, 2018:
+    Thoughts on vectorization:
+	stop word removal makes sense if doing 2,3-grams, ow get lots of
+	n-grams with prepositions, etc.
+	Comparing min_df 0.05 vs. 0.1 - the additional features from 0.05
+	do not seem worth keeping
+
 # Repo organization thoughts...
 
 lit triage text tools repo/product
