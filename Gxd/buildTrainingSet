@@ -1,27 +1,73 @@
-#!/bin/bash
+#!/bin/bash 
 
 # run steps to get a GXD training set that is balanced between pos and neg
 #  samples:
-# Use all positive examples and get 1000 each of negative samples
-#    ... MGI discard and non-Discards that are rejected for GXD
+# Use all positive examples and a random subset of each of the negatives:
+#    ... MGI discard and non-Discards that are rejected for GXD.
+# Select the random subsets to get a balanced sample set, same number of
+#    positive and negative samples.
 
+function Usage() {
+    cat - <<ENDTEXT
+
+$0 [--nosql] [--onlysql] [--random n] [--recordsep x]
+
+    Get and set up the training set data for GXD automated tagging
+
+    --nosql	   don't get new data from db, only reprocess existing files
+    --onlysql	   the opposite
+    --random n	   the number of random samples to select from the discarded
+    		   and not discarded negative samples. Default 1100
+    --recordsep x  the record separator in the sample files. Default=;;
+
+ENDTEXT
+    exit 5
+}
 scriptdir=~/work/AutomatedTagging
 gxddir=${scriptdir}/Gxd
 RECORDSEP=';;'	# is there some way to get this from the python config file?
 		# this is needed to pass to getRandomSubset.py which is
 		#  kind of generic and therefore doesn't use the config file
+doSql=true
+doRest=true
+randomN=1100
 
-${gxddir}/getTrainingData.py  --query pos >trainY.txt
-${gxddir}/getTrainingData.py  --query neg1 >trainNnodis.txt
-${gxddir}/getTrainingData.py  --query neg2 >trainNdiscard.txt
+while [ $# -gt 0 ]; do
+    case "$1" in
+    -h|--help) Usage ;;
+    --nosql)   doSql=false;       shift; ;;
+    --onlysql) doRest=false;      shift; ;;
+    --random)  randomN=$2; shift; shift; ;;
+    --recordsep)  RECORDSEP=$2; shift; shift; ;;
+    -*|--*)    echo "invalid option $1"; Usage ;;
+    *) break; ;;
+    esac
+done
 
-# select a random subset of each
-${scriptdir}/getRandomSubset.py -d ${RECORDSEP} -n 1000 -r trainNnodisRandom.txt -l trainNnodisLeftov.txt <trainNnodis.txt
+# example if:
+if [ $doSql == "true" ]; then
+    set -x
+    ${gxddir}/getTrainingData.py  --query pos >trainY.txt
+    ${gxddir}/getTrainingData.py  --query neg1 >trainNnodis.txt
+    ${gxddir}/getTrainingData.py  --query neg2 >trainNdiscard.txt
+    set +x
+fi
 
-${scriptdir}/getRandomSubset.py -d ${RECORDSEP} -n 1000 -r trainNdiscardRandom.txt -l trainNdiscardLeftov.txt <trainNdiscard.txt
+if [ $doRest == "true" ]; then
 
-# concat the training files into one - without preprocessing to get base set
-${scriptdir}/preprocessSamples.py trainY.txt trainNnodisRandom.txt trainNdiscardRandom.txt > trainingSet.txt
+    # select a random subset of each
+    set -x
+    getRandomSubset.py -d ${RECORDSEP} -n ${randomN} -r trainNnodisRandom.txt -l trainNnodisLeftov.txt <trainNnodis.txt
 
-# now the preprocessed set
-${scriptdir}/preprocessSamples.py -p default trainingSet.txt > trainingPreproc.txt
+    getRandomSubset.py -d ${RECORDSEP} -n ${randomN} -r trainNdiscardRandom.txt -l trainNdiscardLeftov.txt <trainNdiscard.txt
+
+    # concat the training files into one - without preprocessing to get base set
+    preprocessSamples.py trainY.txt trainNnodisRandom.txt trainNdiscardRandom.txt > trainingSet.txt
+
+    # now the preprocessed set
+    preprocessSamples.py -p default trainingSet.txt > trainingPreproc.txt
+
+    # populate training data directories - don't want to automate this yet
+    #populateTrainingDirs.py trainingPreproc.txt
+    set +x
+fi
