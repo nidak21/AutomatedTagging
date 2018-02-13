@@ -24,7 +24,7 @@ class RefSectionRemover (object):
 		):
 	self.keyTerms = keyTerms
 	self.maxFraction = maxFraction
-	self.regexString = self.buildRegex()
+	self.regexString = self.getRegexString()
 	self.refRegex = re.compile(self.regexString)
     # -----------------------
 
@@ -55,8 +55,8 @@ class RefSectionRemover (object):
 	    refStart = textLength
 	else:
 	    m = matches[-1]
-	    lastKeyWord = m.group(0)	# last matched term
-	    refStart = m.start(0)	# position at end of that term
+	    lastKeyWord = m.group(1)	# last matched term
+	    refStart = m.start(1)	# position at end of that term
 	    refLength = textLength - refStart
 
 	    if float(refLength)/textLength > self.maxFraction:
@@ -66,34 +66,45 @@ class RefSectionRemover (object):
 	return lastKeyWord, refStart
     # ----------------------------------
 
-    def buildRegex(self):
-	# for given list of words, return regex pattern string that matches
-	# \b(word1|word2|word3)\b - with each word "almostCaseInsensitive"
+    def getRegexString(self):
+	# for the set of keyTerms, return regex pattern string that matches
+	# \n(term1|term2|term3)\n - with each term "spacesAndCaseInsensitive"
+	# Assuming the doc still has newline's the '\n's match only if the
+	#   keyTerm is on a line by itself - which works well for section
+	#   headings.
+	# If we apply this to docs where newline's have been removed, we'd
+	#   to replace '\n's with '\b's to match work boundaries.
+	#   (could add this as a param to constructor at some point)
+	# The "spacesAndCaseInsensitive" comes from:
+	#   Diff journals use different case conventions, and the text
+	#   extraction algorithm sometimes converts case AND sometimes adds
+	#   spaces between the individual letters (no idea why)
 
-	regexStr = r'\b('
-	insensitive = map(almostCaseInsensitiveRegex, self.keyTerms)
+	regexStr = r'\n('
+	insensitive = map(spacesAndCaseInsensitiveRegex, self.keyTerms)
 	regexStr += '|'.join(insensitive)
-	regexStr += r')\b'
+	regexStr += r')\n'
 	return regexStr
     # ----------------------------------
 
 #------------------ end Class RefSectionRemover
 
-def almostCaseInsensitiveRegex(s):
-    # for given string, return regex pattern string that matches the 1st
-    #  char and then all subsequent chars in either case
-    reg = s[0]
-    for c in s[1:]:
+def spacesAndCaseInsensitiveRegex(s):
+    # for given string, return regex pattern string that matches the chars
+    #  case insensitively and with optional spaces between the chars.
+    reg = []
+    for c in s:
 	if c.isalpha():
-	    reg += '[%s%s]' % (c.upper(), c.lower())
+	    reg.append('[%s%s]' % (c.upper(), c.lower()) )
 	else:
-	    reg += '[%s]' % c
-    return reg
+	    reg.append('[%s]' % c)
+    return '[ ]*'.join(reg)
 # -----------------------
 
 if __name__ == "__main__":
     rm = RefSectionRemover(maxFraction=0.5, keyTerms=['Refs'])
-    shortDoc = "this is the body ........... REFS literature section"
+    print "Regex: %s" % rm.getRegexString()
+    shortDoc = "this is the body ........... \nR EFS\n literature section"
     print "doc: %s" % shortDoc
     print "body: %s" % rm.getBody(shortDoc)
     print "refs: %s" % rm.getRefSection(shortDoc)
