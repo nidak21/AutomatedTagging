@@ -23,8 +23,6 @@ OutputColumns = [
 # Try to keep this script easy to run from various servers,
 # Try to keep import dependencies down to standard Python libaries
 import sys
-sys.path.append('..')
-sys.path.append('../..')
 import os
 import string
 import time
@@ -34,7 +32,8 @@ import db
 #-----------------------------------
 cp = ConfigParser.ConfigParser()
 cp.optionxform = str # make keys case sensitive
-cp.read([ d+'/config.cfg' for d in ['.', '..', '../..', '../../..'] ])
+cl = ['.']+['/'.join(l)+'/config.cfg' for l in [['..']*i for i in range(1,4)]]
+cp.read(cl)
 #
 FIELDSEP = eval(cp.get("DEFAULT", "FIELDSEP"))
 RECORDSEP = eval(cp.get("DEFAULT", "RECORDSEP"))
