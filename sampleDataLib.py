@@ -120,6 +120,7 @@ class SampleRecord (object):
     def removeRefSection(self):
 	self.doc = SampleRecord.refRemover.getBody(self.doc)
 	return self
+    # ---------------------------
 
     miceRegex = re.compile( r'\bmice\b', flags=re.IGNORECASE)
 
@@ -128,11 +129,7 @@ class SampleRecord (object):
 	    self.rejected = True
 	    self.rejectReason = "Mice not found"
 	return self
-
-    def truncateText(self):
-	# so you can see a sample record easily
-	self.doc = self.doc[:50]
-	return self
+    # ---------------------------
 
     urls_re = re.compile(r'\bhttps?://\S*',re.IGNORECASE) # match URLs
     token_re = re.compile(r'\b([a-z_]\w+)\b')	# match lower case words
@@ -140,10 +137,11 @@ class SampleRecord (object):
 
     def removeURLsCleanStem(self):
 	'''
-	remove URLs and punct, lower case everything,
-	convert '-/-',
-	keep tokens that start w/ letter or _ and are 2 or more chars.
-	stem
+	Remove URLs and punct, lower case everything,
+	Convert '-/-' to 'mut_mut',
+	Keep tokens that start w/ letter or _ and are 2 or more chars.
+	Stem,
+	Replace \n with spaces
 	'''
 	output = ''
 
@@ -157,8 +155,8 @@ class SampleRecord (object):
 
     def removeURLs(self):
 	'''
-	remove URLs, lower case everything
-	convert '-/-',
+	Remove URLs, lower case everything,
+	Convert '-/-' to 'mut_mut',
 	'''
 	output = ''
 
@@ -166,6 +164,22 @@ class SampleRecord (object):
 	    s = s.replace('-/-', ' mut_mut ').lower()
 	    output += ' ' + s
 	self.doc = output
+	return self
+    # ---------------------------
+
+    def addJournalFeature(self):
+	'''
+	add the journal name as a text token to the document
+	'''
+	jtext = 'journal__' + '_'.join( self.journal.split(' ') ).lower()
+	self.doc += " " + jtext
+	return self
+
+    # ---------------------------
+
+    def truncateText(self):
+	# for debugging, so you can see a sample record easily
+	self.doc = self.doc[:50]
 	return self
 
     #----------------------
@@ -238,3 +252,5 @@ if __name__ == "__main__":
     r.rejectIfNoMice()
     print r.isReject()
     print r.getRejectReason()
+    r.addJournalFeature()
+    print r.getDocument()
