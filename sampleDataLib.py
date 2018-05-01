@@ -12,12 +12,16 @@ from refSectionLib import RefSectionRemover
 #-----------------------------------
 cp = ConfigParser.ConfigParser()
 cp.optionxform = str # make keys case sensitive
-cp.read([ d+'/config.cfg' for d in ['.', '..', '../..', '../../..'] ])
 
-FIELDSEP  = eval( cp.get("DEFAULT", "FIELDSEP") )
+# generate a path up multiple parent directories to search for config file
+cl = ['/'.join(l)+'/config.cfg' for l in [['.']]+[['..']*i for i in range(1,6)]]
+cp.read(cl)
+
+FIELDSEP    = eval( cp.get("DEFAULT", "FIELDSEP") )
+RECORDSEP   = eval( cp.get("DEFAULT", "RECORDSEP") )
 
 # CLASS_NAMES maps indexes to class names. CLASS_NAME[0] is 0th class name,etc.
-CLASS_NAMES      = eval( cp.get("DEFAULT", "CLASS_NAMES") )
+CLASS_NAMES = eval( cp.get("DEFAULT", "CLASS_NAMES") )
 
 # As is the sklearn convention we use
 #  y_true to be the index of the known class of a sample (from training set)
@@ -81,7 +85,7 @@ class SampleRecord (object):
 		    self.journal,
 		    self.doc,
 		    ]
-	return FIELDSEP.join( fields)
+	return FIELDSEP.join( fields) + RECORDSEP
     #----------------------
 
     def getSampleName(self):
@@ -113,7 +117,7 @@ class SampleRecord (object):
 
     #----------------------
     # "Preprocessor" functions.
-    #  Each should modify this sample and return itself
+    #  Each preprocessor should modify this sample and return itself
     #----------------------
     refRemover = RefSectionRemover(maxFraction=0.4) # finds ref sections
 
