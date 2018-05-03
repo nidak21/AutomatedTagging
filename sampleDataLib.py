@@ -37,8 +37,6 @@ class SampleRecord (object):
     Knows how to take a text representation of a record (typically a
 	text string with delimitted fields) and parse into its fields
     Provides various methods to preprocess a sample record (if any)
-    Knows how to format a record output line for various types of prediction
-	reports (when passed a predicted value for this sample).
 
     A SampleRecord can be marked as "reject". Has rejectReason, ...
     """
@@ -105,9 +103,6 @@ class SampleRecord (object):
 
     def getKnownClassName(self):
 	return self.knownClassName
-
-    def setReject(self, trueOrFalse):
-	self.rejected = trueOrFalse
 
     def isReject(self):
 	return self.rejected
@@ -185,61 +180,89 @@ class SampleRecord (object):
 	# for debugging, so you can see a sample record easily
 	self.doc = self.doc[:50]
 	return self
+# end class SampleRecord ------------------------
 
-    #----------------------
-    # formatting prediction reports, Regular (short) and Long
-    #----------------------
-    def getPredOutputHeader(self, hasConfidence=False):
-	# return formatted header line for prediction report
+class PredictionReporter (object):
+    """
+    Knows how to generate/format prediction reports for SampleRecords and their
+    predictions from some model.
+
+    Provides two types of reports
+	a "short" prediction file with basic sample info + the prediction
+	a longer prediction file that has additional info including the doc
+	itself.
+
+    Knows the structure of a SampleRecord.
+    """
+
+    rptFieldSep = '\t'
+
+    def __init__(self,  exampleSample,		# an example SampleRecord
+			hasConfidence=False,	# T/F the predicting model has
+					    	#  confidences for predictions
+			):
+	# we assume if this exampleSample record has a knownClass, then
+	#  all samples have a knownClass, and we should report that column
+	self.exampleSample  = exampleSample
+	self.knownClassName = exampleSample.getKnownClassName()
+	self.hasConfidence  = hasConfidence
+
+    def getPredHeaderColumns(self):
+	# return list of column names for a header line
 	cols = [ "ID" ]
-	if self.knownClassName != None: cols.append("True Class")
+	if self.exampleSample.knownClassName != None: cols.append("True Class")
 	cols.append("Pred Class")
 	if self.hasConfidence:
 	    cols.append("Confidence")
 	    cols.append("Abs Value")
-	return '\t'.join(cols) + '\n'
+	return cols
 
-    def getPredOutput(self, y_pred, confidence=None):
-	# return formatted line for the prediction report for this sample
-	# y_pred is the predicted class index, not the class name
-	cols = [ self.ID ]
-	if self.knownClassName != None:  cols.append(self.knownClassName)
-	cols.append(CLASS_NAMES[y_pred])
-	if confidence != None:
-	    cols.append("%6.3f" % confidence)
-	    cols.append("%6.3f" % abs(confidence))
-	return '\t'.join(cols) + '\n'
+    def getPredOutputHeader(self):
+	# return formatted header line for prediction report
+	cols = self.getPredHeaderColumns()
+	return self.rptFieldSep.join(cols) + '\n'
 
-    def getPredLongOutputHeader(self, hasConfidence=False):
+    def getPredLongOutputHeader(self):
 	# return formatted header line for Long prediction report
-	cols = [ "ID" ]
-	if self.knownClassName != None: cols.append("True Class")
-	cols.append("Pred Class")
-	if hasConfidence:
-	    cols.append("Confidence")
-	    cols.append("Abs Value")
+	cols = self.getPredHeaderColumns()
 	cols.append("isDiscard")
 	cols.append("status")
 	cols.append("journal")
 	cols.append("Processed text")
-	return '\t'.join(cols) + '\n'
+	return self.rptFieldSep.join(cols) + '\n'
 
-    def getPredLongOutput(self, y_pred, confidence=None):
-	# return formatted line for the Long prediction report for this sample
-	# include confidence value if not None
-	cols = [ self.ID ]
-	if self.knownClassName != None:  cols.append(self.knownClassName)
+    def getPredictionColumns(self, sample, y_pred, confidence):
+	# return list of values to output for the prediction for this sample
+	# y_pred is the predicted class index, not the class name
+	cols = [ sample.ID ]
+	if self.knownClassName != None:  cols.append(sample.knownClassName)
 	cols.append(CLASS_NAMES[y_pred])
-	if self.confidence != None:
-	    cols.append("%6.3f" % confidence)
-	    cols.append("%6.3f" % abs(confidence))
-	cols.append(self.isDiscard)
-	cols.append(self.status)
-	cols.append(str(self.journal))
-	cols.append(str(self.doc))
-	return '\t'.join(cols) + '\n'
+	if self.hasConfidence:
+	    if confidence != None:
+		cols.append("%6.3f" % confidence)
+		cols.append("%6.3f" % abs(confidence))
+	    else:	# don't expect this would ever happen, but to be safe
+		cols.append("none")
+		cols.append("none")
+	return cols
 
-# end class SampleRecord ------------------------
+    def getPredOutput(self, sample, y_pred, confidence=None):
+	# return formatted line for the prediction report for this sample
+	# y_pred is the predicted class index, not the class name
+	cols = self.getPredictionColumns(sample, y_pred, confidence)
+	return self.rptFieldSep.join(cols) + '\n'
+
+    def getPredLongOutput(self, sample, y_pred, confidence=None):
+	# return formatted line for the Long prediction report for this sample
+	# y_pred is the predicted class index, not the class name
+	cols = self.getPredictionColumns(sample, y_pred, confidence)
+	cols.append(sample.isDiscard)
+	cols.append(sample.status)
+	cols.append(str(sample.journal))
+	cols.append(str(sample.doc))
+	return self.rptFieldSep.join(cols) + '\n'
+# end class PredictionReporter ----------------
+
 
 if __name__ == "__main__":
     r = SampleRecord(\
@@ -258,3 +281,7 @@ if __name__ == "__main__":
     print r.getRejectReason()
     r.addJournalFeature()
     print r.getDocument()
+    print "Prediction Report:"
+    rptr = PredictionReporter(r, hasConfidence=True)
+    print rptr.getPredOutputHeader(),
+    print rptr.getPredOutput(r, 0, confidence=-0.5)
