@@ -2,6 +2,15 @@
 Using machine learning to automate MGI literature triage tagging for different
 curation groups
 
+# Note Sept 2018
+This is an early, not gotten very far attempt of doing automated tagging,
+focusing on GXD.
+Since working on this, Xiangying Jiang spent her summer here working on a 
+more sophisticated approach.
+For now, I'm going to mothball this whole repo/approach and work on automated
+MGI relevance (is a paper relevant to MGI) since it appears this is a more
+balanced data set (60% discard, 40% keep)
+
 # General things I've learned
 
     In sklearn, during vectorizing, stop word removal happens before ngram
