@@ -1,0 +1,288 @@
+Fitting 5 folds for each of 1 candidates, totalling 5 fits
+### Start Time 2018/02/15-10-03-45	index file: index.out
+Data dir: ../Data/PlusJournal/,	GridSearch Beta: 4
+Random Seeds:	randForClassifier=160   randForSplit=206   
+### Metrics: Training Set
+             precision    recall  f1-score   support
+
+  Train yes       0.95      0.97      0.96      1668
+
+avg / total       0.95      0.97      0.96      1668
+
+Train F4: 0.968
+
+['yes', 'no']
+[[1617   51]
+ [  85 1616]]
+
+### Metrics: Test Set
+             precision    recall  f1-score   support
+
+  Test  yes       0.88      0.92      0.90       414
+
+avg / total       0.88      0.92      0.90       414
+
+Test  F4: 0.915
+
+['yes', 'no']
+[[380  34]
+ [ 53 376]]
+
+### Best Pipeline Parameters:
+classifier__alpha: 5
+classifier__class_weight: 'balanced'
+classifier__eta0: 0.01
+classifier__learning_rate: 'optimal'
+classifier__loss: 'modified_huber'
+classifier__penalty: 'l2'
+vectorizer__max_df: 0.7
+vectorizer__min_df: 0.1
+vectorizer__ngram_range: (1, 2)
+
+### GridSearch Pipeline:
+classifier:
+SGDClassifier(alpha=5, average=False, class_weight='balanced', epsilon=0.1,
+       eta0=0.01, fit_intercept=True, l1_ratio=0.15,
+       learning_rate='optimal', loss='modified_huber', n_iter=5, n_jobs=1,
+       penalty='l2', power_t=0.5, random_state=160, shuffle=True,
+       verbose=0, warm_start=False)
+
+scaler:
+StandardScaler(copy=True, with_mean=False, with_std=True)
+
+vectorizer:
+TfidfVectorizer(analyzer=u'word', binary=False, decode_error='strict',
+        dtype=<type 'numpy.int64'>, encoding=u'utf-8', input=u'content',
+        lowercase=False, max_df=0.7, max_features=None, min_df=0.1,
+        ngram_range=(1, 2), norm=u'l2', preprocessor=None, smooth_idf=True,
+        stop_words='english', strip_accents=None, sublinear_tf=False,
+        token_pattern=u'(?u)\\b\\w\\w+\\b', tokenizer=None, use_idf=True,
+        vocabulary=None)
+
+### Parameter Options Tried:
+classifier__alpha:[5]
+classifier__class_weight:['balanced']
+classifier__eta0:[0.01]
+classifier__learning_rate:['optimal']
+classifier__loss:['modified_huber']
+classifier__penalty:['l2']
+vectorizer__max_df:[0.7]
+vectorizer__min_df:[0.1]
+vectorizer__ngram_range:[(1, 2)]
+
+### Top positive features (20)
++0.0315	embryon day
++0.0225	embryo
++0.0211	e18
++0.0208	mous embryo
++0.0202	development
++0.0198	e14
++0.0172	e17
++0.0160	e12
++0.0157	e11
++0.0156	e15
++0.0149	e16
++0.0143	genotyp
++0.0142	adult mice
++0.0137	e13
++0.0137	embryon develop
++0.0134	e10
++0.0132	develop mous
++0.0132	e9
++0.0131	immunostain
++0.0127	dure develop
+
+### Top negative features (20)
+-0.0087	natur com
+-0.0087	www natur
+-0.0087	cancer
+-0.0087	biomed
+-0.0088	immunolog
+-0.0090	mail
+-0.0090	il
+-0.0090	transgen mous
+-0.0091	circl
+-0.0092	studi report
+-0.0092	discov
+-0.0092	cancer cell
+-0.0092	infect
+-0.0093	therapeut
+-0.0100	inject
+-0.0102	novemb
+-0.0103	link
+-0.0106	injuri
+-0.0115	request
+-0.0117	treatment
+
+### Vectorizer:   Number of Features: 3126
+First 10 features: [u'a1', u'aa', u'ab', u'abbrevi', u'abcam', u'aberr', u'abil', u'abl', u'ablat', u'abnorm']
+
+Middle 10 features: [u'keyword', u'kg', u'ki67', u'kidney', u'kill', u'kim', u'kinas', u'kind', u'kind provid', u'kinet']
+
+Last 10 features: [u'yu', u'zebrafish', u'zeiss', u'zhang', u'zhang et', u'zhao', u'zhou', u'zhu', u'zinc', u'zone']
+
+### False positives: 53
+26689747
+29118110
+25852647
+27179074
+28823874
+
+### False negatives: 34
+24194600
+27010197
+28266638
+28715454
+27271479
+
+### Train Test Split Report, test % = 0.20
+All Samples:   4212	Training Samples:   3369	Test Samples:    843
+Yes count:     2082	Yes count:          1668	Yes count:       414
+No  count:     2130	No  count:          1701	No  count:       429
+Percent Yes:    49%	Percent Yes:         49%	Percent Yes:     49%
+### End Time 2018/02/15-10-09-16
+
+Fitting 5 folds for each of 3 candidates, totalling 15 fits
+### Start Time 2018/02/15-10-11-18	index file: index.out
+Data dir: ../Data/PlusJournal/,	GridSearch Beta: 4
+Random Seeds:	randForClassifier=193   randForSplit=494   
+### Metrics: Training Set
+             precision    recall  f1-score   support
+
+  Train yes       0.93      0.95      0.94      1662
+
+avg / total       0.93      0.95      0.94      1662
+
+Train F4: 0.949
+
+['yes', 'no']
+[[1578   84]
+ [ 112 1595]]
+
+### Metrics: Test Set
+             precision    recall  f1-score   support
+
+  Test  yes       0.91      0.92      0.91       420
+
+avg / total       0.91      0.92      0.91       420
+
+Test  F4: 0.921
+
+['yes', 'no']
+[[387  33]
+ [ 39 384]]
+
+### Best Pipeline Parameters:
+classifier__alpha: 10
+classifier__class_weight: 'balanced'
+classifier__eta0: 0.01
+classifier__learning_rate: 'optimal'
+classifier__loss: 'modified_huber'
+classifier__penalty: 'l2'
+vectorizer__max_df: 0.7
+vectorizer__min_df: 0.1
+vectorizer__ngram_range: (1, 2)
+
+### GridSearch Pipeline:
+classifier:
+SGDClassifier(alpha=10, average=False, class_weight='balanced', epsilon=0.1,
+       eta0=0.01, fit_intercept=True, l1_ratio=0.15,
+       learning_rate='optimal', loss='modified_huber', n_iter=5, n_jobs=1,
+       penalty='l2', power_t=0.5, random_state=193, shuffle=True,
+       verbose=0, warm_start=False)
+
+scaler:
+StandardScaler(copy=True, with_mean=False, with_std=True)
+
+vectorizer:
+TfidfVectorizer(analyzer=u'word', binary=False, decode_error='strict',
+        dtype=<type 'numpy.int64'>, encoding=u'utf-8', input=u'content',
+        lowercase=False, max_df=0.7, max_features=None, min_df=0.1,
+        ngram_range=(1, 2), norm=u'l2', preprocessor=None, smooth_idf=True,
+        stop_words='english', strip_accents=None, sublinear_tf=False,
+        token_pattern=u'(?u)\\b\\w\\w+\\b', tokenizer=None, use_idf=True,
+        vocabulary=None)
+
+### Parameter Options Tried:
+classifier__alpha:[5, 10, 50]
+classifier__class_weight:['balanced']
+classifier__eta0:[0.01]
+classifier__learning_rate:['optimal']
+classifier__loss:['modified_huber']
+classifier__penalty:['l2']
+vectorizer__max_df:[0.7]
+vectorizer__min_df:[0.1]
+vectorizer__ngram_range:[(1, 2)]
+
+### Top positive features (20)
++0.0223	embryon day
++0.0177	embryo
++0.0153	e18
++0.0147	development
++0.0146	e14
++0.0136	mous embryo
++0.0125	e15
++0.0121	e13
++0.0120	e17
++0.0116	e16
++0.0115	e12
++0.0113	vagin plug
++0.0110	genotyp
++0.0110	e11
++0.0108	dure develop
++0.0108	develop mous
++0.0102	embryon develop
++0.0100	dissect
++0.0099	dure embryon
++0.0099	e10
+
+### Top negative features (20)
+-0.0063	mice treat
+-0.0065	cancer
+-0.0065	cancer cell
+-0.0066	diseas
+-0.0066	tnf
+-0.0067	fat
+-0.0067	phosphoryl
+-0.0070	evalu
+-0.0071	stimul
+-0.0071	transfer
+-0.0071	il
+-0.0073	inflammatori
+-0.0074	injuri
+-0.0074	cytokin
+-0.0075	therapeut
+-0.0077	request
+-0.0079	inject
+-0.0081	infect
+-0.0087	novemb
+-0.0092	treatment
+
+### Vectorizer:   Number of Features: 3123
+First 10 features: [u'a1', u'aa', u'ab', u'abbrevi', u'abcam', u'aberr', u'abil', u'abl', u'ablat', u'abnorm']
+
+Middle 10 features: [u'kill', u'kim', u'kinas', u'kind', u'kind provid', u'kinet', u'kit', u'kit qiagen', u'knock', u'knockdown']
+
+Last 10 features: [u'young', u'yu', u'zebrafish', u'zeiss', u'zhang', u'zhang et', u'zhao', u'zhou', u'zinc', u'zone']
+
+### False positives: 39
+28525591
+27383233
+26442852
+20339484
+28504705
+
+### False negatives: 33
+26558779
+26543095
+15084259
+27058754
+27075243
+
+### Train Test Split Report, test % = 0.20
+All Samples:   4212	Training Samples:   3369	Test Samples:    843
+Yes count:     2082	Yes count:          1662	Yes count:       420
+No  count:     2130	No  count:          1707	No  count:       423
+Percent Yes:    49%	Percent Yes:         49%	Percent Yes:     49%
+### End Time 2018/02/15-10-22-35
+
